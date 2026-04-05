@@ -3,8 +3,8 @@
 import React, { Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Button } from '@/src/app/components/ui/button'
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/src/app/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
 
 function VerifyEmailContent() {

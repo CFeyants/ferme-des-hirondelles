@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useStore } from '@/context/StoreContext'
-import { Button } from '@/src/app/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { CheckCircle, MapPin, Calendar, Printer } from 'lucide-react'
 
 export default function ConfirmationPage() {

@@ -3,11 +3,11 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import { useStore } from '@/context/StoreContext'
-import { Button } from '@/src/app/components/ui/button'
-import { ScrollArea } from '@/src/app/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react'
-import { SheetClose } from '@/src/app/components/ui/sheet'
-import { Separator } from '@/src/app/components/ui/separator'
+import { SheetClose } from '@/components/ui/sheet'
+import { Separator } from '@/components/ui/separator'
 
 export const Cart = () => {
   const { cart, updateCartQuantity, removeFromCart, cartTotal } = useStore()

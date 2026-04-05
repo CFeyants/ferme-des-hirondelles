@@ -4,13 +4,13 @@ import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ShoppingCart, Menu, User, Tractor, LogOut } from 'lucide-react'
-import { Button } from '@/src/app/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/src/app/components/ui/sheet'
-import { Badge } from '@/src/app/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
+import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
-} from '@/src/app/components/ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu'
 import { useStore } from '@/context/StoreContext'
 import { useAuth } from '@/context/AuthContext'
 import { Cart } from '@/components/shop/Cart'

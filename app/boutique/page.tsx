@@ -3,8 +3,8 @@
 import React, { useState } from 'react'
 import { useStore } from '@/context/StoreContext'
 import { ProductCard } from '@/components/shop/ProductCard'
-import { Button } from '@/src/app/components/ui/button'
-import { Input } from '@/src/app/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Category } from '@/data'
 import { Search } from 'lucide-react'
 

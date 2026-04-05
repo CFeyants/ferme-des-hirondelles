@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Product } from '@/data'
 import { useStore } from '@/context/StoreContext'
-import { Button } from '@/src/app/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { ShoppingCart } from 'lucide-react'
 
 interface ProductCardProps {

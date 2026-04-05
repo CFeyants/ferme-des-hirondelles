@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { Button } from '@/src/app/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { ArrowRight, Calendar, ShoppingBasket, MapPin, CreditCard } from 'lucide-react'
 import { isShopOpen } from '@/data'
 

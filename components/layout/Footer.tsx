@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { MapPin, Phone, Facebook, Clock, Tractor } from 'lucide-react'
-import { Separator } from '@/src/app/components/ui/separator'
+import { Separator } from '@/components/ui/separator'
 
 export const Footer = () => {
   return (
