@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Calendar, ShoppingBasket, MapPin, CreditCard } from 'lucide-react'
 import { isShopOpen } from '@/data'
+import { OrderCountdown } from '@/components/shop/OrderCountdown'
 
 export default function HomePage() {
   const shopStatus = isShopOpen()
@@ -47,6 +48,11 @@ export default function HomePage() {
             {shopStatus.message}
           </div>
         </div>
+      </section>
+
+      {/* Countdown */}
+      <section className="container mx-auto px-4 -mt-8">
+        <OrderCountdown />
       </section>
 
       {/* How it works */}

@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
-import { Plus, Trash, Edit, Download } from 'lucide-react'
+import { Plus, Trash, Edit, Download, CheckCheck, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { Product } from '@/data'
 import { useForm } from 'react-hook-form'
@@ -79,9 +79,23 @@ const OrdersView = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-3">
         <h2 className="text-xl font-bold">Liste des commandes</h2>
-        <Button onClick={handleExport} variant="outline" className="gap-2"><Download className="h-4 w-4" /> Exporter Excel</Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => {
+              orders.filter(o => !o.isPrepared).forEach(o => updateOrder({ ...o, isPrepared: true, status: 'confirmed' }))
+              toast.success('Toutes les commandes marquées comme préparées')
+            }}
+            variant="outline"
+            className="gap-2 border-green-600 text-green-700 hover:bg-green-50"
+          >
+            <CheckCheck className="h-4 w-4" /> Tout marquer comme préparé
+          </Button>
+          <Button onClick={handleExport} variant="outline" className="gap-2">
+            <Download className="h-4 w-4" /> Exporter Excel
+          </Button>
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card><CardHeader><CardTitle>Total Commandes</CardTitle></CardHeader><CardContent><p className="text-4xl font-bold text-green-700">{orders.length}</p></CardContent></Card>
@@ -112,12 +126,30 @@ const OrdersView = () => {
                 <TableCell className="capitalize">{order.paymentMethod}</TableCell>
                 <TableCell>{order.total.toFixed(2)}€</TableCell>
                 <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id={`p-${order.id}`} checked={order.isPrepared || false} onCheckedChange={() => updateOrder({ ...order, isPrepared: !order.isPrepared })} />
-                    <label htmlFor={`p-${order.id}`} className="text-sm cursor-pointer">{order.isPrepared ? 'Oui' : 'Non'}</label>
-                  </div>
+                  {order.isPrepared ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full">
+                      <Check className="h-3 w-3" /> Préparée
+                    </span>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-green-600 text-green-700 hover:bg-green-50 text-xs h-7"
+                      onClick={() => updateOrder({ ...order, isPrepared: true, status: 'confirmed' })}
+                    >
+                      ✅ Valider la préparation
+                    </Button>
+                  )}
                 </TableCell>
-                <TableCell><Badge variant={order.status === 'picked_up' ? 'secondary' : 'default'}>{order.status === 'picked_up' ? 'Terminé' : 'À préparer'}</Badge></TableCell>
+                <TableCell>
+                  <Badge className={
+                    order.status === 'picked_up' ? 'bg-stone-200 text-stone-700' :
+                    order.isPrepared ? 'bg-green-100 text-green-800 border border-green-300' :
+                    'bg-yellow-100 text-yellow-800 border border-yellow-300'
+                  }>
+                    {order.status === 'picked_up' ? 'Terminée' : order.isPrepared ? 'Préparée' : 'À préparer'}
+                  </Badge>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

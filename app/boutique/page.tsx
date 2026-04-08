@@ -6,7 +6,8 @@ import { ProductCard } from '@/components/shop/ProductCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Category } from '@/data'
-import { Search } from 'lucide-react'
+import { Search, AlertTriangle } from 'lucide-react'
+import { OrderCountdown } from '@/components/shop/OrderCountdown'
 
 export default function ShopPage() {
   const { products } = useStore()
@@ -22,6 +23,18 @@ export default function ShopPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <div className="mb-6">
+        <OrderCountdown />
+      </div>
+
+      <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
+        <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+        <p className="text-sm text-amber-800">
+          <span className="font-bold">⚠️ Politique d'annulation :</span> Toute annulation doit être effectuée directement à la ferme.
+          Le remboursement de l'acompte se fera sur place. Aucune annulation ne peut être traitée en ligne.
+        </p>
+      </div>
+
       <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
         <div>
           <h1 className="text-4xl font-serif font-bold text-stone-900 mb-2">La Boutique</h1>

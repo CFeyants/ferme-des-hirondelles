@@ -14,6 +14,7 @@ import { CreditCard, Landmark } from 'lucide-react'
 import { isShopOpen } from '@/data'
 import { createClient } from '@/lib/supabase/client'
 import { generateOrderConfirmationEmail } from '@/lib/emails/orderConfirmation'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -34,6 +35,9 @@ export default function CheckoutPage() {
   const router = useRouter()
   const shopStatus = isShopOpen()
   const [isProcessing, setIsProcessing] = useState(false)
+
+  const [acceptCancellation, setAcceptCancellation] = useState(false)
+  const [cancellationError, setCancellationError] = useState(false)
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<CheckoutForm>({
     defaultValues: { paymentMethod: 'card', pickupDay: 'vendredi' }
@@ -76,6 +80,11 @@ export default function CheckoutPage() {
   }
 
   const onSubmit = async (data: CheckoutForm) => {
+    if (!acceptCancellation) {
+      setCancellationError(true)
+      return
+    }
+    setCancellationError(false)
     setIsProcessing(true)
     try {
       const orderId = `CMD-${generateId().toUpperCase()}`
@@ -207,6 +216,27 @@ export default function CheckoutPage() {
                   </div>
                 ))}
               </RadioGroup>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+              <p className="text-sm text-amber-800 mb-4">
+                <span className="font-bold">⚠️ Politique d'annulation :</span> Toute annulation doit être effectuée directement à la ferme.
+                Le remboursement de l'acompte se fera sur place. Aucune annulation ne peut être traitée en ligne.
+              </p>
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="acceptCancellation"
+                  checked={acceptCancellation}
+                  onCheckedChange={(v) => { setAcceptCancellation(v as boolean); setCancellationError(false) }}
+                  className="mt-0.5"
+                />
+                <label htmlFor="acceptCancellation" className="text-sm text-stone-700 cursor-pointer">
+                  J'ai lu et j'accepte la politique d'annulation de la Ferme des Hirondelles
+                </label>
+              </div>
+              {cancellationError && (
+                <p className="text-xs text-red-600 mt-2 ml-7">Vous devez accepter la politique d'annulation pour continuer.</p>
+              )}
             </div>
           </form>
         </div>
