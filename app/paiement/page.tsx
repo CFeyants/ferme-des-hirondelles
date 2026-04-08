@@ -15,6 +15,7 @@ import { isShopOpen } from '@/data'
 import { createClient } from '@/lib/supabase/client'
 import { generateOrderConfirmationEmail } from '@/lib/emails/orderConfirmation'
 import { Checkbox } from '@/components/ui/checkbox'
+import { useLanguage } from '@/context/LanguageContext'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -33,6 +34,7 @@ interface CheckoutForm {
 export default function CheckoutPage() {
   const { cart, cartTotal, addOrder, clearCart, setLastOrder } = useStore()
   const router = useRouter()
+  const { t } = useLanguage()
   const shopStatus = isShopOpen()
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -63,8 +65,8 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        <h2 className="text-2xl font-bold mb-4">Votre panier est vide</h2>
-        <Button onClick={() => router.push('/boutique')}>Retour à la boutique</Button>
+        <h2 className="text-2xl font-bold mb-4">{t('checkout.emptyCart')}</h2>
+        <Button onClick={() => router.push('/boutique')}>{t('cart.continueShopping')}</Button>
       </div>
     )
   }
@@ -72,9 +74,9 @@ export default function CheckoutPage() {
   if (!shopStatus.isOpen) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        <h2 className="text-2xl font-bold text-red-600 mb-4">Commandes fermées</h2>
+        <h2 className="text-2xl font-bold text-red-600 mb-4">{t('checkout.shopClosed')}</h2>
         <p className="mb-6">{shopStatus.message}</p>
-        <Button onClick={() => router.push('/')} variant="outline" className="mt-4">Retour à l'accueil</Button>
+        <Button onClick={() => router.push('/')} variant="outline" className="mt-4">{t('common.backHome')}</Button>
       </div>
     )
   }
@@ -126,10 +128,10 @@ export default function CheckoutPage() {
         })
       })
 
-      toast.success('Commande validée avec succès !')
+      toast.success(t('checkout.pay'))
       router.push('/confirmation')
     } catch (error) {
-      toast.error('Erreur lors de la validation de la commande. Veuillez réessayer.')
+      toast.error(t('checkout.error'))
     } finally {
       setIsProcessing(false)
     }
@@ -137,35 +139,35 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
-      <h1 className="text-3xl font-serif font-bold text-stone-900 mb-8">Finaliser ma commande</h1>
+      <h1 className="text-3xl font-serif font-bold text-stone-900 mb-8">{t('checkout.title')}</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <form id="checkout-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <span className="bg-green-100 text-green-800 w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
-                Coordonnées
+                {t('checkout.coordinates')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Prénom</Label>
+                  <Label htmlFor="firstName">{t('checkout.firstName')}</Label>
                   <Input id="firstName" {...register('firstName', { required: true })} placeholder="Jean" />
-                  {errors.firstName && <span className="text-red-500 text-xs">Requis</span>}
+                  {errors.firstName && <span className="text-red-500 text-xs">{t('checkout.required')}</span>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Nom</Label>
+                  <Label htmlFor="lastName">{t('checkout.lastName')}</Label>
                   <Input id="lastName" {...register('lastName', { required: true })} placeholder="Dupont" />
-                  {errors.lastName && <span className="text-red-500 text-xs">Requis</span>}
+                  {errors.lastName && <span className="text-red-500 text-xs">{t('checkout.required')}</span>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('checkout.email')}</Label>
                   <Input id="email" type="email" {...register('email', { required: true })} placeholder="jean@example.com" />
-                  {errors.email && <span className="text-red-500 text-xs">Requis</span>}
+                  {errors.email && <span className="text-red-500 text-xs">{t('checkout.required')}</span>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Téléphone</Label>
+                  <Label htmlFor="phone">{t('checkout.phone')}</Label>
                   <Input id="phone" type="tel" {...register('phone', { required: true })} placeholder="0470 12 34 56" />
-                  {errors.phone && <span className="text-red-500 text-xs">Requis</span>}
+                  {errors.phone && <span className="text-red-500 text-xs">{t('checkout.required')}</span>}
                 </div>
               </div>
             </div>
@@ -173,11 +175,11 @@ export default function CheckoutPage() {
             <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <span className="bg-green-100 text-green-800 w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
-                Moment du retrait
+                {t('checkout.pickup')}
               </h2>
-              <p className="text-sm text-stone-500 mb-4">Adresse : Ferme des Hirondelles, 33 rue du Moulin, 1950 Crainhem</p>
+              <p className="text-sm text-stone-500 mb-4">{t('checkout.pickupAddress')}</p>
               <RadioGroup defaultValue="vendredi" onValueChange={(val) => setValue('pickupDay', val)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[{ value: 'vendredi', label: 'Vendredi Soir', time: '17h00 - 19h30' }, { value: 'samedi', label: 'Samedi Journée', time: '10h00 - 16h00' }].map(opt => (
+                {[{ value: 'vendredi', label: t('checkout.friday'), time: t('checkout.fridayTime') }, { value: 'samedi', label: t('checkout.saturday'), time: t('checkout.saturdayTime') }].map(opt => (
                   <div key={opt.value}>
                     <RadioGroupItem value={opt.value} id={`r-${opt.value}`} className="peer sr-only" />
                     <Label htmlFor={`r-${opt.value}`} className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent peer-data-[state=checked]:border-green-600 peer-data-[state=checked]:bg-green-50 cursor-pointer transition-all">
@@ -192,17 +194,17 @@ export default function CheckoutPage() {
             <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <span className="bg-green-100 text-green-800 w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
-                Acompte de réservation
+                {t('checkout.deposit')}
               </h2>
               <div className="mb-6 bg-yellow-50 p-4 rounded-md border border-yellow-200 text-sm text-stone-700">
-                <p className="font-bold mb-1">Politique d'acompte :</p>
-                <p>Un acompte de <strong>10€ par tranche de 50€ d'achat</strong> est demandé pour valider votre commande.</p>
+                <p className="font-bold mb-1">{t('checkout.depositPolicyTitle')}</p>
+                <p>{t('checkout.depositPolicy')}</p>
               </div>
               <RadioGroup defaultValue="card" onValueChange={(val: any) => setValue('paymentMethod', val)} className="space-y-3">
                 {[
-                  { value: 'card', icon: <CreditCard className="h-5 w-5 text-stone-600" />, label: 'Carte Bancaire', sub: 'Bancontact, Visa, Mastercard' },
-                  { value: 'wero', icon: <div className="font-bold text-blue-600 bg-blue-50 px-2 rounded">W</div>, label: 'Wero (Paiement Mobile)', sub: 'Rapide et sécurisé via votre app bancaire' },
-                  { value: 'transfer', icon: <Landmark className="h-5 w-5 text-stone-600" />, label: 'Virement Bancaire', sub: 'Preuve de paiement requise avant retrait' },
+                  { value: 'card', icon: <CreditCard className="h-5 w-5 text-stone-600" />, label: t('checkout.card'), sub: t('checkout.cardSub') },
+                  { value: 'wero', icon: <div className="font-bold text-blue-600 bg-blue-50 px-2 rounded">W</div>, label: t('checkout.wero'), sub: t('checkout.weroSub') },
+                  { value: 'transfer', icon: <Landmark className="h-5 w-5 text-stone-600" />, label: t('checkout.transfer'), sub: t('checkout.transferSub') },
                 ].map(pm => (
                   <div key={pm.value} className="flex items-center space-x-2 border rounded-lg p-4 has-[button[data-state=checked]]:border-green-600 has-[button[data-state=checked]]:bg-green-50">
                     <RadioGroupItem value={pm.value} id={`pm-${pm.value}`} />
@@ -220,8 +222,7 @@ export default function CheckoutPage() {
 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
               <p className="text-sm text-amber-800 mb-4">
-                <span className="font-bold">⚠️ Politique d'annulation :</span> Toute annulation doit être effectuée directement à la ferme.
-                Le remboursement de l'acompte se fera sur place. Aucune annulation ne peut être traitée en ligne.
+                <span className="font-bold">{t('checkout.cancellationTitle')}</span> {t('checkout.cancellationText')}
               </p>
               <div className="flex items-start gap-3">
                 <Checkbox
@@ -231,11 +232,11 @@ export default function CheckoutPage() {
                   className="mt-0.5"
                 />
                 <label htmlFor="acceptCancellation" className="text-sm text-stone-700 cursor-pointer">
-                  J'ai lu et j'accepte la politique d'annulation de la Ferme des Hirondelles
+                  {t('checkout.acceptCancellation')}
                 </label>
               </div>
               {cancellationError && (
-                <p className="text-xs text-red-600 mt-2 ml-7">Vous devez accepter la politique d'annulation pour continuer.</p>
+                <p className="text-xs text-red-600 mt-2 ml-7">{t('checkout.cancellationError')}</p>
               )}
             </div>
           </form>
@@ -243,7 +244,7 @@ export default function CheckoutPage() {
 
         <div className="lg:col-span-1">
           <div className="bg-stone-50 p-6 rounded-xl border border-stone-200 sticky top-24">
-            <h3 className="text-lg font-bold mb-4">Récapitulatif</h3>
+            <h3 className="text-lg font-bold mb-4">{t('checkout.summary')}</h3>
             <div className="space-y-4 max-h-60 overflow-y-auto pr-2">
               {cart.map(item => (
                 <div key={item.id} className="flex justify-between text-sm">
@@ -254,12 +255,12 @@ export default function CheckoutPage() {
             </div>
             <Separator className="my-4" />
             <div className="space-y-2 mb-4">
-              <div className="flex justify-between items-center text-stone-600"><span>Total panier</span><span>{cartTotal.toFixed(2)}€</span></div>
-              <div className="flex justify-between items-center text-green-700 font-bold bg-green-50 p-2 rounded"><span>Acompte à payer</span><span>{depositAmount.toFixed(2)}€</span></div>
-              <div className="flex justify-between items-center text-stone-500 text-sm"><span>Solde en magasin</span><span>{remainingBalance.toFixed(2)}€</span></div>
+              <div className="flex justify-between items-center text-stone-600"><span>{t('checkout.cartTotal')}</span><span>{cartTotal.toFixed(2)}€</span></div>
+              <div className="flex justify-between items-center text-green-700 font-bold bg-green-50 p-2 rounded"><span>{t('checkout.depositAmount')}</span><span>{depositAmount.toFixed(2)}€</span></div>
+              <div className="flex justify-between items-center text-stone-500 text-sm"><span>{t('checkout.balanceDue')}</span><span>{remainingBalance.toFixed(2)}€</span></div>
             </div>
             <Button form="checkout-form" type="submit" className="w-full bg-green-700 hover:bg-green-800 py-6 text-lg" disabled={isProcessing}>
-              {isProcessing ? 'Traitement...' : `Payer l'acompte (${depositAmount.toFixed(2)}€)`}
+              {isProcessing ? t('checkout.processing') : `${t('checkout.pay')} (${depositAmount.toFixed(2)}€)`}
             </Button>
           </div>
         </div>

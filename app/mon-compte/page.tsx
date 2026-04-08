@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useStore } from '@/context/StoreContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { useRouter } from 'next/navigation'
 import { Order, CartItem } from '@/data'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Loader2, RefreshCw, ShoppingBasket, AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -15,19 +15,20 @@ import { fr } from 'date-fns/locale'
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  pending:    { label: 'En attente',  color: 'bg-yellow-100 text-yellow-800' },
-  confirmed:  { label: 'Confirmée',   color: 'bg-blue-100 text-blue-800' },
-  picked_up:  { label: 'Retirée',     color: 'bg-green-100 text-green-800' },
-  cancelled:  { label: 'Annulée',     color: 'bg-red-100 text-red-800' },
-}
-
 export default function MonComptePage() {
   const { user, loading: authLoading } = useAuth()
   const { products, addToCart, clearCart } = useStore()
+  const { t } = useLanguage()
   const router = useRouter()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+
+  const STATUS_STYLES: Record<string, { color: string }> = {
+    pending:    { color: 'bg-yellow-100 text-yellow-800' },
+    confirmed:  { color: 'bg-blue-100 text-blue-800' },
+    picked_up:  { color: 'bg-green-100 text-green-800' },
+    cancelled:  { color: 'bg-red-100 text-red-800' },
+  }
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -49,7 +50,7 @@ export default function MonComptePage() {
           .sort((a: Order, b: Order) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         setOrders(myOrders)
       } catch {
-        toast.error('Impossible de charger vos commandes.')
+        toast.error(t('common.error'))
       } finally {
         setLoading(false)
       }
@@ -69,7 +70,7 @@ export default function MonComptePage() {
       const product = products.find(p => p.id === item.id)
       if (product) addToCart(product, item.quantity)
     })
-    toast.success('Produits ajoutés au panier !')
+    toast.success(t('cart.checkout'))
     router.push('/boutique')
   }
 
@@ -84,11 +85,11 @@ export default function MonComptePage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-serif font-bold text-stone-900">Mon Compte</h1>
+        <h1 className="text-3xl font-serif font-bold text-stone-900">{t('account.title')}</h1>
         <p className="text-stone-500 mt-1">{user?.email}</p>
       </div>
 
-      <h2 className="text-xl font-bold mb-6 text-stone-800">Historique des commandes</h2>
+      <h2 className="text-xl font-bold mb-6 text-stone-800">{t('account.orders')}</h2>
 
       {loading ? (
         <div className="flex justify-center py-20">
@@ -97,16 +98,18 @@ export default function MonComptePage() {
       ) : orders.length === 0 ? (
         <div className="text-center py-20 bg-stone-50 rounded-xl border border-dashed border-stone-200">
           <ShoppingBasket className="h-12 w-12 text-stone-300 mx-auto mb-4" />
-          <p className="text-stone-500 text-lg">Vous n'avez pas encore de commande.</p>
+          <p className="text-stone-500 text-lg">{t('account.noOrders')}</p>
           <Button onClick={() => router.push('/boutique')} className="mt-4 bg-green-600 hover:bg-green-700">
-            Découvrir la boutique
+            {t('account.shopCta')}
           </Button>
         </div>
       ) : (
         <div className="space-y-6">
           {orders.map(order => {
             const available = canReorder(order.items)
-            const status = STATUS_LABELS[order.status] ?? { label: order.status, color: 'bg-stone-100 text-stone-700' }
+            const statusKey = order.status as keyof typeof STATUS_STYLES
+            const statusStyle = STATUS_STYLES[statusKey] ?? { color: 'bg-stone-100 text-stone-700' }
+            const statusLabel = t(`account.status.${order.status}`) || order.status
             return (
               <div key={order.id} className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-5 bg-stone-50 border-b border-stone-200">
@@ -114,12 +117,12 @@ export default function MonComptePage() {
                     <p className="font-mono font-bold text-stone-900">{order.id}</p>
                     <p className="text-sm text-stone-500">
                       {format(new Date(order.createdAt), 'd MMMM yyyy', { locale: fr })}
-                      {' · '}Retrait {order.pickupDate === 'vendredi' ? 'vendredi soir' : 'samedi'}
+                      {' · '}{t('account.pickup')} {order.pickupDate === 'vendredi' ? t('account.friday') : t('account.saturday')}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-full ${status.color}`}>
-                      {status.label}
+                    <span className={`text-xs font-semibold px-3 py-1 rounded-full ${statusStyle.color}`}>
+                      {statusLabel}
                     </span>
                     <span className="font-bold text-stone-900">{order.total.toFixed(2)} €</span>
                   </div>
@@ -142,12 +145,12 @@ export default function MonComptePage() {
                       className="border-green-600 text-green-700 hover:bg-green-50"
                     >
                       <RefreshCw className="h-4 w-4 mr-2" />
-                      Refaire cette commande
+                      {t('account.reorder')}
                     </Button>
                   ) : (
                     <div className="flex items-center gap-2 text-sm text-stone-400">
                       <AlertTriangle className="h-4 w-4" />
-                      Certains produits ne sont plus disponibles
+                      {t('account.unavailable')}
                     </div>
                   )}
                 </div>

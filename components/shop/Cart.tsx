@@ -3,6 +3,7 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import { useStore } from '@/context/StoreContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react'
@@ -11,19 +12,16 @@ import { Separator } from '@/components/ui/separator'
 
 export const Cart = () => {
   const { cart, updateCartQuantity, removeFromCart, cartTotal } = useStore()
+  const { t } = useLanguage()
   const router = useRouter()
-
-  const handleCheckout = () => {
-    router.push('/paiement')
-  }
 
   if (cart.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 text-stone-500">
         <ShoppingBag className="h-12 w-12 opacity-20" />
-        <p className="text-lg font-medium">Votre panier est vide</p>
+        <p className="text-lg font-medium">{t('cart.empty')}</p>
         <SheetClose asChild>
-          <Button variant="outline">Continuer vos achats</Button>
+          <Button variant="outline">{t('cart.continueShopping')}</Button>
         </SheetClose>
       </div>
     )
@@ -32,8 +30,8 @@ export const Cart = () => {
   return (
     <div className="flex flex-col h-full">
       <div className="py-6">
-        <h2 className="text-2xl font-serif font-bold text-stone-900">Votre Panier</h2>
-        <p className="text-sm text-stone-500">{cart.length} articles</p>
+        <h2 className="text-2xl font-serif font-bold text-stone-900">{t('cart.title')}</h2>
+        <p className="text-sm text-stone-500">{cart.length} {t('cart.items')}</p>
       </div>
 
       <ScrollArea className="flex-1 -mx-6 px-6">
@@ -71,15 +69,15 @@ export const Cart = () => {
       <div className="pt-6 space-y-4">
         <Separator />
         <div className="flex justify-between items-center text-lg font-bold">
-          <span>Total</span>
+          <span>{t('cart.total')}</span>
           <span>{cartTotal.toFixed(2)}€</span>
         </div>
         <p className="text-xs text-stone-500 text-center">
-          Paiement sécurisé lors de la validation.<br />Retrait vendredi soir ou samedi.
+          {t('cart.securePayment')}<br />{t('cart.pickupInfo')}
         </p>
         <SheetClose asChild>
-          <Button className="w-full bg-green-700 hover:bg-green-800 text-white py-6 text-lg" onClick={handleCheckout}>
-            Passer commande
+          <Button className="w-full bg-green-700 hover:bg-green-800 text-white py-6 text-lg" onClick={() => router.push('/paiement')}>
+            {t('cart.checkout')}
           </Button>
         </SheetClose>
       </div>

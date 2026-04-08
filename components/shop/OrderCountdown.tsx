@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Clock } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
 function getNextThursdayDeadline(): Date {
   const now = new Date()
@@ -31,6 +32,7 @@ function pad(n: number) {
 export function OrderCountdown() {
   const [timeLeft, setTimeLeft] = useState<{ d: number; h: number; m: number; s: number } | null>(null)
   const [closed, setClosed] = useState(false)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const update = () => {
@@ -60,8 +62,8 @@ export function OrderCountdown() {
     return (
       <div className="w-full bg-red-50 border border-red-200 rounded-xl px-6 py-4 flex items-center gap-3 justify-center">
         <Clock className="h-5 w-5 text-red-500 shrink-0" />
-        <span className="font-semibold text-red-700">Commandes fermées</span>
-        <span className="text-red-600 text-sm">— Réouverture lundi matin</span>
+        <span className="font-semibold text-red-700">{t('countdown.closed')}</span>
+        <span className="text-red-600 text-sm">{t('countdown.reopens')}</span>
       </div>
     )
   }
@@ -77,17 +79,17 @@ export function OrderCountdown() {
     <div className={`w-full ${color.bg} border ${color.border} rounded-xl px-6 py-4 flex flex-col sm:flex-row items-center gap-3 justify-center`}>
       <div className="flex items-center gap-2">
         <span className={`w-2 h-2 rounded-full ${color.badge} animate-pulse`} />
-        <span className={`font-semibold ${color.label}`}>Commandes ouvertes — Il reste</span>
+        <span className={`font-semibold ${color.label}`}>{t('countdown.open')}</span>
       </div>
       <div className={`flex items-center gap-1 font-mono font-bold text-lg ${color.text}`}>
-        {timeLeft!.d > 0 && <span>{timeLeft!.d}j </span>}
+        {timeLeft!.d > 0 && <span>{timeLeft!.d}{t('countdown.days')} </span>}
         <span>{pad(timeLeft!.h)}</span>
         <span className="opacity-60">:</span>
         <span>{pad(timeLeft!.m)}</span>
         <span className="opacity-60">:</span>
         <span>{pad(timeLeft!.s)}</span>
       </div>
-      <span className={`text-sm ${color.label}`}>avant la fermeture (jeudi 23h59)</span>
+      <span className={`text-sm ${color.label}`}>{t('countdown.before')}</span>
     </div>
   )
 }

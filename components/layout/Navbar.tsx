@@ -13,12 +13,15 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useStore } from '@/context/StoreContext'
 import { useAuth } from '@/context/AuthContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { Cart } from '@/components/shop/Cart'
 import { isAdmin } from '@/utils/admin'
+import { Locale } from '@/lib/i18n/translations'
 
 export const Navbar = () => {
   const { cart } = useStore()
   const { user, signOut } = useAuth()
+  const { locale, setLocale, t } = useLanguage()
   const router = useRouter()
 
   const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0)
@@ -40,12 +43,23 @@ export const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-          <Link href="/" className="hover:text-green-700 transition-colors">Accueil</Link>
-          <Link href="/boutique" className="hover:text-green-700 transition-colors">Boutique</Link>
-          <Link href="/a-propos" className="hover:text-green-700 transition-colors">À Propos</Link>
+          <Link href="/" className="hover:text-green-700 transition-colors">{t('nav.home')}</Link>
+          <Link href="/boutique" className="hover:text-green-700 transition-colors">{t('nav.shop')}</Link>
+          <Link href="/a-propos" className="hover:text-green-700 transition-colors">{t('nav.about')}</Link>
           {isUserAdmin && (
-            <Link href="/admin" className="hover:text-green-700 transition-colors text-red-600">Administration</Link>
+            <Link href="/admin" className="hover:text-green-700 transition-colors text-red-600">{t('nav.admin')}</Link>
           )}
+          <div className="flex items-center gap-1 border border-stone-300 rounded-md overflow-hidden text-xs">
+            {(['fr', 'nl', 'en'] as Locale[]).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLocale(l)}
+                className={`px-2 py-1 uppercase font-bold transition-colors ${locale === l ? 'bg-green-700 text-white' : 'hover:bg-stone-100 text-stone-600'}`}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -57,11 +71,11 @@ export const Navbar = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('nav.myAccount')}</DropdownMenuLabel>
                 <DropdownMenuItem className="text-xs text-stone-500">{user.email}</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/mon-compte" className="cursor-pointer">Mes commandes</Link>
+                  <Link href="/mon-compte" className="cursor-pointer">{t('nav.myOrders')}</Link>
                 </DropdownMenuItem>
                 {isUserAdmin && (
                   <>
@@ -74,13 +88,13 @@ export const Navbar = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-red-600 cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
-                  Déconnexion
+                  {t('nav.signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Link href="/auth/login">
-              <Button variant="ghost" className="font-medium">Connexion</Button>
+              <Button variant="ghost" className="font-medium">{t('nav.signIn')}</Button>
             </Link>
           )}
 
@@ -109,17 +123,25 @@ export const Navbar = () => {
               <SheetContent side="left">
                 <div className="sr-only"><SheetTitle>Menu</SheetTitle></div>
                 <div className="flex flex-col gap-4 mt-8">
-                  <Link href="/" className="text-lg font-medium">Accueil</Link>
-                  <Link href="/boutique" className="text-lg font-medium">Boutique</Link>
-                  <Link href="/a-propos" className="text-lg font-medium">À Propos</Link>
+                  <Link href="/" className="text-lg font-medium">{t('nav.home')}</Link>
+                  <Link href="/boutique" className="text-lg font-medium">{t('nav.shop')}</Link>
+                  <Link href="/a-propos" className="text-lg font-medium">{t('nav.about')}</Link>
                   {user ? (
                     <>
-                      {isUserAdmin && <Link href="/admin" className="text-lg font-medium">Administration</Link>}
-                      <button onClick={handleSignOut} className="text-lg font-medium text-left text-red-600">Déconnexion</button>
+                      <Link href="/mon-compte" className="text-lg font-medium">{t('nav.myOrders')}</Link>
+                      {isUserAdmin && <Link href="/admin" className="text-lg font-medium">{t('nav.admin')}</Link>}
+                      <button onClick={handleSignOut} className="text-lg font-medium text-left text-red-600">{t('nav.signOut')}</button>
                     </>
                   ) : (
-                    <Link href="/auth/login" className="text-lg font-medium text-green-700">Connexion</Link>
+                    <Link href="/auth/login" className="text-lg font-medium text-green-700">{t('nav.signIn')}</Link>
                   )}
+                  <div className="flex items-center gap-1 border border-stone-300 rounded-md overflow-hidden text-sm w-fit">
+                    {(['fr', 'nl', 'en'] as Locale[]).map((l) => (
+                      <button key={l} onClick={() => setLocale(l)} className={`px-3 py-1 uppercase font-bold transition-colors ${locale === l ? 'bg-green-700 text-white' : 'hover:bg-stone-100 text-stone-600'}`}>
+                        {l}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>

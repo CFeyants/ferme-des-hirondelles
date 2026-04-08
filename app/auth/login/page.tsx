@@ -7,6 +7,7 @@ import * as z from 'zod'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useLanguage } from '@/context/LanguageContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,8 +20,8 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 const loginSchema = z.object({
-  email: z.string().email({ message: 'Adresse email invalide' }),
-  password: z.string().min(1, { message: 'Le mot de passe est requis' }),
+  email: z.string().email(),
+  password: z.string().min(1),
 })
 type LoginFormData = z.infer<typeof loginSchema>
 
@@ -28,6 +29,7 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const from = searchParams.get('from') ?? '/boutique'
+  const { t } = useLanguage()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
@@ -42,10 +44,10 @@ function LoginForm() {
     try {
       const supabase = createClient()
       const { error } = await supabase.auth.signInWithPassword({ email: data.email, password: data.password })
-      if (error) throw new Error(error.message === 'Invalid login credentials' ? 'Email ou mot de passe incorrect.' : error.message)
+      if (error) throw new Error(t('auth.login.error'))
       router.replace(from)
     } catch (err: any) {
-      setError(err.message || 'Une erreur est survenue.')
+      setError(err.message || t('common.error'))
     } finally {
       setIsLoading(false)
     }
@@ -72,32 +74,30 @@ function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-serif font-bold text-center">Connexion</CardTitle>
-        <CardDescription className="text-center">Entrez vos identifiants pour accéder à votre compte</CardDescription>
+        <CardTitle className="text-2xl font-serif font-bold text-center">{t('auth.login.title')}</CardTitle>
+        <CardDescription className="text-center">{t('auth.login.subtitle')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {error && <Alert variant="destructive" className="bg-red-50 text-red-900 border-red-200"><AlertDescription>{error}</AlertDescription></Alert>}
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('auth.login.email')}</Label>
             <Input id="email" type="email" placeholder="nom@exemple.com" {...register('email')} className={errors.email ? 'border-red-500' : ''} />
-            {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Link href="/auth/forgot-password" className="text-xs text-stone-500 hover:text-green-600 hover:underline">Mot de passe oublié ?</Link>
+              <Label htmlFor="password">{t('auth.login.password')}</Label>
+              <Link href="/auth/forgot-password" className="text-xs text-stone-500 hover:text-green-600 hover:underline">{t('auth.login.forgotPassword')}</Link>
             </div>
             <Input id="password" type="password" {...register('password')} className={errors.password ? 'border-red-500' : ''} />
-            {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
           </div>
           <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Se connecter
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} {t('auth.login.submit')}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col space-y-4 text-center text-sm text-stone-500">
-        <div>Pas encore de compte ?{' '}<Link href="/auth/register" className="text-green-600 font-medium hover:underline">Créer un compte</Link></div>
+        <div>{t('auth.login.noAccount')}{' '}<Link href="/auth/register" className="text-green-600 font-medium hover:underline">{t('auth.login.createAccount')}</Link></div>
         <div className="w-full pt-4 border-t mt-4">
           <Button variant="outline" className="w-full text-xs text-stone-400 border-dashed" onClick={handleAdminReset} disabled={isResetting}>
             {isResetting ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : <ShieldAlert className="mr-2 h-3 w-3" />}

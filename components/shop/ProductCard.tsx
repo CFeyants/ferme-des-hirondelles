@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Product } from '@/data'
 import { useStore } from '@/context/StoreContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { Button } from '@/components/ui/button'
 import { ShoppingCart } from 'lucide-react'
 
@@ -12,6 +13,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useStore()
+  const { t } = useLanguage()
   const [quantity, setQuantity] = useState(1)
 
   const handleAddToCart = () => {
@@ -22,15 +24,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <div className="group bg-white rounded-lg border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col h-full">
       <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+        <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
         {!product.inStock && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
             <span className="bg-red-600 text-white px-3 py-1 text-sm font-bold uppercase tracking-wider transform -rotate-12">
-              Épuisé
+              {t('product.outOfStock')}
             </span>
           </div>
         )}
@@ -58,11 +56,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 hover:bg-stone-100 text-stone-600">+</button>
               </div>
               <Button onClick={handleAddToCart} className="flex-1 bg-green-700 hover:bg-green-800 text-white">
-                <ShoppingCart className="mr-2 h-4 w-4" /> Ajouter
+                <ShoppingCart className="mr-2 h-4 w-4" /> {t('product.addToCart')}
               </Button>
             </>
           ) : (
-            <Button disabled className="w-full bg-stone-100 text-stone-400 border border-stone-200">Indisponible</Button>
+            <Button disabled className="w-full bg-stone-100 text-stone-400 border border-stone-200">{t('product.outOfStock')}</Button>
           )}
         </div>
       </div>

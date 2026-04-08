@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { useStore } from '@/context/StoreContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { ProductCard } from '@/components/shop/ProductCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,6 +12,7 @@ import { OrderCountdown } from '@/components/shop/OrderCountdown'
 
 export default function ShopPage() {
   const { products } = useStore()
+  const { t } = useLanguage()
   const [activeCategory, setActiveCategory] = useState<Category | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -30,20 +32,19 @@ export default function ShopPage() {
       <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
         <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
         <p className="text-sm text-amber-800">
-          <span className="font-bold">⚠️ Politique d'annulation :</span> Toute annulation doit être effectuée directement à la ferme.
-          Le remboursement de l'acompte se fera sur place. Aucune annulation ne peut être traitée en ligne.
+          <span className="font-bold">⚠️ {t('shop.cancellationPolicy')} :</span> {t('shop.cancellationText')}
         </p>
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
         <div>
-          <h1 className="text-4xl font-serif font-bold text-stone-900 mb-2">La Boutique</h1>
-          <p className="text-stone-600">Retrouvez tous nos produits fermiers, disponibles pour le retrait ce week-end.</p>
+          <h1 className="text-4xl font-serif font-bold text-stone-900 mb-2">{t('shop.title')}</h1>
+          <p className="text-stone-600">{t('shop.subtitle')}</p>
         </div>
         <div className="w-full md:w-72 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
           <Input
-            placeholder="Rechercher un produit..."
+            placeholder={t('shop.search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 border-stone-300 focus:border-green-500 focus:ring-green-500"
@@ -59,7 +60,7 @@ export default function ShopPage() {
             onClick={() => setActiveCategory(cat)}
             className={activeCategory === cat ? 'bg-green-700 hover:bg-green-800' : 'text-stone-600'}
           >
-            {cat === 'all' ? 'Tous les produits' : cat === 'viande' ? 'Viande' : 'Fruits & Légumes'}
+            {cat === 'all' ? t('shop.all') : cat === 'viande' ? t('shop.meat') : t('shop.veggies')}
           </Button>
         ))}
       </div>
@@ -70,9 +71,9 @@ export default function ShopPage() {
         </div>
       ) : (
         <div className="text-center py-20 bg-stone-50 rounded-lg border border-dashed border-stone-200">
-          <p className="text-lg text-stone-500">Aucun produit ne correspond à votre recherche.</p>
+          <p className="text-lg text-stone-500">{t('shop.noResults')}</p>
           <Button variant="link" onClick={() => { setActiveCategory('all'); setSearchQuery('') }} className="text-green-600">
-            Réinitialiser les filtres
+            {t('shop.resetFilters')}
           </Button>
         </div>
       )}
