@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import { CreditCard, Landmark } from 'lucide-react'
 import { isShopOpen } from '@/data'
 import { createClient } from '@/lib/supabase/client'
+import { generateOrderConfirmationEmail } from '@/lib/emails/orderConfirmation'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -104,6 +105,18 @@ export default function CheckoutPage() {
       addOrder(newOrder)
       setLastOrder(newOrder)
       clearCart()
+
+      // Envoi email de confirmation
+      await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: data.email,
+          subject: `Confirmation de votre commande #${orderId} — Ferme des Hirondelles`,
+          html: generateOrderConfirmationEmail(newOrder)
+        })
+      })
+
       toast.success('Commande validée avec succès !')
       router.push('/confirmation')
     } catch (error) {
