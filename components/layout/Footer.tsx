@@ -38,7 +38,8 @@ export const Footer = () => {
             </div>
             <div className="flex items-center gap-3">
               <Phone className="h-5 w-5 shrink-0 text-green-600" />
-              <p>+32 0 00 00 00 00</p>
+              {/* TODO: remplacer par le vrai numéro de téléphone */}
+              <p>+32 [PHONE]</p>
             </div>
           </div>
 
@@ -47,7 +48,8 @@ export const Footer = () => {
             <div className="flex items-start gap-3">
               <Clock className="h-5 w-5 mt-1 shrink-0 text-green-600" />
               <div className="space-y-1 text-sm">
-                <p><span className="font-semibold text-white">{t('footer.friday')}</span> {t('footer.fridayTime')}</p>
+                <p><span className="font-semibold text-white">{t('footer.tuesday')}</span> {t('footer.tuesdayTime')}</p>
+                <p><span className="font-semibold text-white">{t('footer.friday')}</span> {t('footer.fridayTime')} <span className="text-green-400 text-xs">{t('footer.pickupOnly')}</span></p>
                 <p><span className="font-semibold text-white">{t('footer.saturday')}</span> {t('footer.saturdayTime')}</p>
                 <Separator className="my-2 bg-stone-700" />
                 <p className="text-orange-300">{t('footer.deadline')}</p>

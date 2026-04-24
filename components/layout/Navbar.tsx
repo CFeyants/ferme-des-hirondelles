@@ -45,6 +45,7 @@ export const Navbar = () => {
         <div className="hidden md:flex items-center gap-6 text-sm font-medium">
           <Link href="/" className="hover:text-green-700 transition-colors">{t('nav.home')}</Link>
           <Link href="/boutique" className="hover:text-green-700 transition-colors">{t('nav.shop')}</Link>
+          <Link href="/recettes" className="hover:text-green-700 transition-colors">{t('nav.recipes')}</Link>
           <Link href="/a-propos" className="hover:text-green-700 transition-colors">{t('nav.about')}</Link>
           {isUserAdmin && (
             <Link href="/admin" className="hover:text-green-700 transition-colors text-red-600">{t('nav.admin')}</Link>
@@ -125,6 +126,7 @@ export const Navbar = () => {
                 <div className="flex flex-col gap-4 mt-8">
                   <Link href="/" className="text-lg font-medium">{t('nav.home')}</Link>
                   <Link href="/boutique" className="text-lg font-medium">{t('nav.shop')}</Link>
+                  <Link href="/recettes" className="text-lg font-medium">{t('nav.recipes')}</Link>
                   <Link href="/a-propos" className="text-lg font-medium">{t('nav.about')}</Link>
                   {user ? (
                     <>

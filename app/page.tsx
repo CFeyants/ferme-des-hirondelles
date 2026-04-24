@@ -3,10 +3,29 @@
 import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Calendar, ShoppingBasket, MapPin, CreditCard } from 'lucide-react'
+import { ArrowRight, Calendar, ShoppingBasket, MapPin, CreditCard, Star, ChevronRight, Clock } from 'lucide-react'
 import { isShopOpen } from '@/data'
+import { RECETTES } from '@/lib/recettes'
 import { OrderCountdown } from '@/components/shop/OrderCountdown'
 import { useLanguage } from '@/context/LanguageContext'
+
+const GOOGLE_REVIEWS = [
+  {
+    name: 'Valérie D.',
+    rating: 5,
+    text: 'Très chouette endroit pour acheter des légumes frais directement à la ferme. Personnel accueillant et sympathique.',
+  },
+  {
+    name: 'Marc T.',
+    rating: 5,
+    text: 'La viande est excellente, on sent vraiment la différence avec ce qu\'on trouve en grande surface. Les saucisses artisanales sont un must !',
+  },
+  {
+    name: 'Sophie L.',
+    rating: 5,
+    text: 'Super initiative de proposer le click & collect. Produits frais, prix honnêtes et on sait exactement d\'où ça vient. Je recommande vivement !',
+  },
+]
 
 export default function HomePage() {
   const shopStatus = isShopOpen()
@@ -122,6 +141,82 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Google Reviews */}
+      <section className="container mx-auto px-4">
+        <div className="text-center mb-10 space-y-2">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-stone-900">{t('home.reviews.title')}</h2>
+          <p className="text-stone-500">{t('home.reviews.subtitle')}</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {GOOGLE_REVIEWS.map((review, i) => (
+            <div key={i} className="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm flex flex-col gap-3">
+              <div className="flex gap-0.5">
+                {Array.from({ length: review.rating }).map((_, j) => (
+                  <Star key={j} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <p className="text-stone-700 leading-relaxed flex-1">"{review.text}"</p>
+              <div className="flex items-center justify-between pt-2 border-t border-stone-100">
+                <span className="font-semibold text-stone-800 text-sm">{review.name}</span>
+                <span className="text-xs text-stone-400">Google</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-sm text-stone-400 mt-6">
+          {t('home.reviews.average')}{' '}
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=Zwaluwenboerderij+Ferme+des+Hirondelles+Kraainem"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-green-600 hover:underline"
+          >
+            {t('home.reviews.viewOnGoogle')}
+          </a>
+        </p>
+      </section>
+
+      {/* Besoin d'inspiration */}
+      <section className="bg-stone-100 py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10 space-y-2">
+            <span className="text-green-700 font-bold uppercase tracking-wider text-sm">{t('home.inspiration.tag')}</span>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-stone-900">{t('home.inspiration.title')}</h2>
+            <p className="text-stone-500">{t('home.inspiration.subtitle')}</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {RECETTES.slice(0, 3).map((recette) => (
+              <Link key={recette.slug} href={`/recettes/${recette.slug}`} className="group bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className="h-48 overflow-hidden">
+                  <img src={recette.image} alt={recette.titre} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                </div>
+                <div className="p-5 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-medium">{recette.categorie}</span>
+                    <span className="text-xs text-stone-400">{recette.difficulte}</span>
+                  </div>
+                  <h3 className="font-serif font-bold text-stone-900 group-hover:text-green-700 transition-colors">{recette.titre}</h3>
+                  <div className="flex items-center gap-1 text-xs text-stone-500">
+                    <Clock className="h-3 w-3" />
+                    <span>{recette.tempsPrepMinutes + recette.tempsCuissonMinutes} min</span>
+                    <span className="mx-1">·</span>
+                    <span>{recette.personnagesBase} pers.</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center">
+            <Link href="/recettes">
+              <Button variant="outline" className="border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white">
+                {t('home.inspiration.viewAll')} <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
     </div>
   )
 }

@@ -3,6 +3,7 @@ import './globals.css'
 import { Providers } from '@/components/providers/Providers'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { ConstructionBanner } from '@/components/layout/ConstructionBanner'
 
 export const metadata: Metadata = {
   title: 'Ferme des Hirondelles',
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="fr">
       <body className="min-h-screen flex flex-col bg-stone-50 font-sans text-stone-900">
         <Providers>
+          <ConstructionBanner />
           <Navbar />
           <main className="flex-1 flex flex-col">
             {children}
