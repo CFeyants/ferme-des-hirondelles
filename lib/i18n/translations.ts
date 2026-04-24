@@ -17,9 +17,13 @@ export const translations = {
     home: {
       hero: {
         title: 'De notre ferme à votre assiette',
-        subtitle: 'Viande de qualité et légumes de saison. Commandez en ligne et retirez vos produits frais à la ferme chaque semaine.',
-        cta: 'Commander maintenant',
+        badge: "🌿 Commandes ouvertes jusqu'au jeudi 23h59",
+        subtitle: 'Viande et légumes fermiers, élevés à Kraainem. Commandez en ligne avant jeudi, retirez vendredi soir ou samedi.',
+        cta: 'Commander',
+        ctaRecipes: 'Nos recettes',
         about: 'Notre histoire',
+        address: '📍 33 rue du Moulin, Kraainem · Ven/Sam',
+        rating: '⭐ 4,8/5 · Google Maps',
       },
       howItWorks: {
         title: 'Comment ça marche ?',
@@ -51,6 +55,32 @@ export const translations = {
         title: "Besoin d'inspiration ?",
         subtitle: 'Des recettes simples et savoureuses à préparer avec ce que vous commandez.',
         viewAll: 'Voir toutes les recettes',
+      },
+      products: {
+        title: 'Nos produits de la semaine',
+        subtitle: 'Porc fermier sur paille, poulet plein air et légumes de saison — préparés le vendredi matin',
+        viewAll: 'Voir toute la boutique',
+      },
+      bento: {
+        a: {
+          title: 'Sans intermédiaire',
+          desc: "De notre élevage à votre table. Pas d'entrepôt, pas de chambre froide de 6 mois. On prépare votre commande le vendredi matin.",
+        },
+        b: {
+          title: 'Kraainem',
+          text: '33 rue du Moulin',
+          badge: '📍 À 10 min de Bruxelles',
+        },
+        c: {
+          title: '4,8 / 5',
+          text: 'Note Google Maps',
+          sub: 'Avis clients vérifiés',
+        },
+        d: {
+          title: 'Zéro gaspillage',
+          text: 'On ne prépare que ce qui est commandé. Les paniers anti-gaspi sont à -20%.',
+          cta: 'Voir les paniers →',
+        },
       },
     },
     shop: {
@@ -294,9 +324,13 @@ export const translations = {
     home: {
       hero: {
         title: 'Van onze boerderij tot uw bord',
-        subtitle: 'Kwaliteitsvlees en seizoensgroenten. Bestel online en haal uw verse producten op bij de boerderij.',
-        cta: 'Nu bestellen',
+        badge: '🌿 Bestellingen open tot donderdag 23u59',
+        subtitle: 'Boerderijvlees en seizoensgroenten, gekweekt in Kraainem. Bestel online voor donderdag, haal op vrijdagavond of zaterdag.',
+        cta: 'Bestellen',
+        ctaRecipes: 'Onze recepten',
         about: 'Ons verhaal',
+        address: '📍 Molenstraat 33, Kraainem · Vrij/Zat',
+        rating: '⭐ 4,8/5 · Google Maps',
       },
       howItWorks: {
         title: 'Hoe werkt het?',
@@ -328,6 +362,32 @@ export const translations = {
         title: 'Inspiratie nodig?',
         subtitle: 'Eenvoudige en lekkere recepten om klaar te maken met wat u bestelt.',
         viewAll: 'Alle recepten bekijken',
+      },
+      products: {
+        title: 'Onze producten van de week',
+        subtitle: 'Varkensvlees op stro, scharrelkip en seizoensgroenten — vrijdagochtend vers bereid',
+        viewAll: 'Bekijk de volledige winkel',
+      },
+      bento: {
+        a: {
+          title: 'Zonder tussenpersonen',
+          desc: 'Van onze boerderij rechtstreeks naar uw tafel. Geen magazijn, geen koelkamer van 6 maanden. Uw bestelling wordt vrijdagochtend vers bereid.',
+        },
+        b: {
+          title: 'Kraainem',
+          text: 'Molenstraat 33',
+          badge: '📍 Op 10 min van Brussel',
+        },
+        c: {
+          title: '4,8 / 5',
+          text: 'Google Maps-score',
+          sub: 'Geverifieerde klantbeoordelingen',
+        },
+        d: {
+          title: 'Nul voedselverspilling',
+          text: 'We bereiden alleen wat er besteld is. Anti-verspilling manden zijn -20%.',
+          cta: 'Bekijk de manden →',
+        },
       },
     },
     shop: {
@@ -571,9 +631,13 @@ export const translations = {
     home: {
       hero: {
         title: 'From our farm to your plate',
-        subtitle: 'Quality meat and seasonal vegetables. Order online and pick up your fresh products at the farm every week.',
+        badge: '🌿 Orders open until Thursday 11:59 PM',
+        subtitle: 'Farm-raised meat and seasonal vegetables, grown in Kraainem. Order online by Thursday, pick up Friday evening or Saturday.',
         cta: 'Order now',
+        ctaRecipes: 'Our recipes',
         about: 'Our story',
+        address: '📍 33 rue du Moulin, Kraainem · Fri/Sat',
+        rating: '⭐ 4.8/5 · Google Maps',
       },
       howItWorks: {
         title: 'How does it work?',
@@ -605,6 +669,32 @@ export const translations = {
         title: 'Need inspiration?',
         subtitle: 'Simple and delicious recipes to make with what you order.',
         viewAll: 'View all recipes',
+      },
+      products: {
+        title: 'Our products this week',
+        subtitle: 'Straw-raised pork, free-range chicken and seasonal vegetables — freshly prepared Friday morning',
+        viewAll: 'View the full shop',
+      },
+      bento: {
+        a: {
+          title: 'No middlemen',
+          desc: 'From our farm directly to your table. No warehouse, no 6-month cold storage. Your order is prepared fresh on Friday morning.',
+        },
+        b: {
+          title: 'Kraainem',
+          text: '33 rue du Moulin',
+          badge: '📍 10 min from Brussels',
+        },
+        c: {
+          title: '4.8 / 5',
+          text: 'Google Maps rating',
+          sub: 'Verified customer reviews',
+        },
+        d: {
+          title: 'Zero waste',
+          text: 'We only prepare what has been ordered. Anti-waste baskets are -20% off.',
+          cta: 'View the baskets →',
+        },
       },
     },
     shop: {
