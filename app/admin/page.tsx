@@ -54,8 +54,37 @@ export default function AdminPage() {
   )
 }
 
+function formatWeight(kg: number): string {
+  const grams = Math.round(kg * 1000)
+  if (grams < 1000) return `${grams} g`
+  const kgVal = grams / 1000
+  if (kgVal % 1 === 0) return `${kgVal} kg`
+  return `${kgVal.toFixed(3).replace(/\.?0+$/, '').replace('.', ',')} kg`
+}
+
 const OrdersView = () => {
   const { orders, updateOrder } = useStore()
+  const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set())
+
+  const toggleSelect = (id: string) => {
+    setSelectedOrders(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  const allSelected = orders.length > 0 && selectedOrders.size === orders.length
+  const toggleSelectAll = () => {
+    setSelectedOrders(allSelected ? new Set() : new Set(orders.map(o => o.id)))
+  }
+
+  const markSelectedPrepared = () => {
+    const toMark = orders.filter(o => selectedOrders.has(o.id) && !o.isPrepared)
+    toMark.forEach(o => updateOrder({ ...o, isPrepared: true, status: 'confirmed' }))
+    setSelectedOrders(new Set())
+    toast.success(`${toMark.length} commande(s) marquée(s) comme préparée(s)`)
+  }
 
   const handleExport = () => {
     const data = orders.map(o => ({
@@ -63,7 +92,7 @@ const OrdersView = () => {
       Client: o.customerName, Email: o.customerEmail, Telephone: o.customerPhone || '',
       Retrait: o.pickupDate, Paiement: o.paymentMethod, Total: o.total,
       Statut: o.status, Prepare: o.isPrepared ? 'Oui' : 'Non',
-      Produits: o.items.map(i => `${i.quantity}x ${i.name}`).join(', ')
+      Produits: o.items.map(i => `${i.unit === 'kg' ? formatWeight(i.quantity) : i.quantity + 'x'} ${i.name}`).join(', ')
     }))
     const ws = XLSX.utils.json_to_sheet(data)
     const wb = XLSX.utils.book_new()
@@ -73,15 +102,26 @@ const OrdersView = () => {
   }
 
   const totalQty = orders.reduce((acc, o) => {
-    o.items.forEach(i => { acc[i.name] = (acc[i.name] || 0) + i.quantity })
+    o.items.forEach(i => {
+      if (!acc[i.name]) acc[i.name] = { qty: 0, unit: i.unit }
+      acc[i.name].qty += i.quantity
+    })
     return acc
-  }, {} as Record<string, number>)
+  }, {} as Record<string, { qty: number; unit: string }>)
 
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap justify-between items-center gap-3">
         <h2 className="text-xl font-bold">Liste des commandes</h2>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          {selectedOrders.size > 0 && (
+            <Button
+              onClick={markSelectedPrepared}
+              className="gap-2 bg-green-700 hover:bg-green-800 text-white"
+            >
+              <CheckCheck className="h-4 w-4" /> Marquer sélection comme préparée ({selectedOrders.size})
+            </Button>
+          )}
           <Button
             onClick={() => {
               orders.filter(o => !o.isPrepared).forEach(o => updateOrder({ ...o, isPrepared: true, status: 'confirmed' }))
@@ -101,8 +141,11 @@ const OrdersView = () => {
         <Card><CardHeader><CardTitle>Total Commandes</CardTitle></CardHeader><CardContent><p className="text-4xl font-bold text-green-700">{orders.length}</p></CardContent></Card>
         <Card><CardHeader><CardTitle>À Préparer</CardTitle></CardHeader><CardContent>
           <div className="max-h-40 overflow-y-auto text-sm space-y-1">
-            {Object.entries(totalQty).map(([name, qty]) => (
-              <div key={name} className="flex justify-between"><span>{name}</span><span className="font-bold">{qty}</span></div>
+            {Object.entries(totalQty).map(([name, { qty, unit }]) => (
+              <div key={name} className="flex justify-between">
+                <span>{name}</span>
+                <span className="font-bold">{unit === 'kg' ? formatWeight(qty) : `${qty} × ${unit}`}</span>
+              </div>
             ))}
           </div>
         </CardContent></Card>
@@ -111,15 +154,21 @@ const OrdersView = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-10">
+                <Checkbox checked={allSelected} onCheckedChange={toggleSelectAll} aria-label="Tout sélectionner" />
+              </TableHead>
               <TableHead>ID</TableHead><TableHead>Client</TableHead><TableHead>Retrait</TableHead>
               <TableHead>Paiement</TableHead><TableHead>Total</TableHead><TableHead>Préparée ?</TableHead><TableHead>Statut</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orders.length === 0 ? (
-              <TableRow><TableCell colSpan={7} className="text-center py-8 text-stone-500">Aucune commande.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={8} className="text-center py-8 text-stone-500">Aucune commande.</TableCell></TableRow>
             ) : orders.map(order => (
-              <TableRow key={order.id}>
+              <TableRow key={order.id} className={selectedOrders.has(order.id) ? 'bg-green-50' : ''}>
+                <TableCell>
+                  <Checkbox checked={selectedOrders.has(order.id)} onCheckedChange={() => toggleSelect(order.id)} aria-label={`Sélectionner ${order.id}`} />
+                </TableCell>
                 <TableCell className="font-mono">{order.id}</TableCell>
                 <TableCell><div className="font-medium">{order.customerName}</div><div className="text-xs text-stone-500">{order.customerEmail}</div></TableCell>
                 <TableCell className="capitalize">{order.pickupDate}</TableCell>
@@ -166,7 +215,7 @@ const ProductsView = () => {
   const { register, handleSubmit, reset, setValue } = useForm<Product>()
 
   const onSubmit = (data: Product) => {
-    const formatted = { ...data, id: editingProduct ? editingProduct.id : Math.random().toString(36).substr(2, 9), price: Number(data.price), stockQuantity: Number(data.stockQuantity), inStock: Number(data.stockQuantity) > 0 }
+    const formatted = { ...data, id: editingProduct ? editingProduct.id : Math.random().toString(36).substring(2, 11), price: Number(data.price), stockQuantity: Number(data.stockQuantity), inStock: Number(data.stockQuantity) > 0 }
     editingProduct ? updateProduct(formatted) : addProduct(formatted)
     setIsDialogOpen(false); reset(); setEditingProduct(null)
   }

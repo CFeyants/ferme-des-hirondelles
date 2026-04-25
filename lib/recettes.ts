@@ -107,7 +107,7 @@ export const RECETTES: Recette[] = [
     description:
       'Un classique intemporel : le rôti de porc fermier doré en croûte, servi avec les légumes de la ferme rôtis au four. Généreux et sans chichi.',
     image:
-      'https://images.unsplash.com/photo-1598103442097-8b74394b95c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
+      'https://images.unsplash.com/photo-1546069901-eacef0df6022?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
     personnagesBase: 6,
     tempsPrepMinutes: 15,
     tempsCuissonMinutes: 75,
@@ -169,7 +169,7 @@ export const RECETTES: Recette[] = [
     description:
       'Un poulet fermier rôti lentement, entouré des légumes de saison de la ferme. Simple, généreux, parfait.',
     image:
-      'https://images.unsplash.com/photo-1524347054950-51e1d99ef3b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
+      'https://images.unsplash.com/photo-1762154194962-cccc677be031?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
     personnagesBase: 4,
     tempsPrepMinutes: 15,
     tempsCuissonMinutes: 75,
@@ -229,7 +229,7 @@ export const RECETTES: Recette[] = [
     description:
       'Des boulettes façonnées à la main avec le haché de porc de la ferme, mijotées dans une sauce tomate parfumée. Un classique belge adoré par tous.',
     image:
-      'https://images.unsplash.com/photo-1563245372-f21724e3856d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
+      'https://images.unsplash.com/photo-1544009717-1c2561ae1439?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
     personnagesBase: 4,
     tempsPrepMinutes: 20,
     tempsCuissonMinutes: 35,
@@ -344,7 +344,7 @@ export const RECETTES: Recette[] = [
     description:
       'Un classique rapide et savoureux avec les saucisses artisanales de la ferme et des pommes de terre sautées au beurre et au persil.',
     image:
-      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
+      'https://images.unsplash.com/photo-1579366948929-444eb79881eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
     personnagesBase: 4,
     tempsPrepMinutes: 10,
     tempsCuissonMinutes: 25,

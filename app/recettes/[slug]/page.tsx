@@ -64,6 +64,17 @@ export default function RecetteDetailPage() {
   const [servings, setServings] = useState(recette?.personnagesBase ?? 4)
   const [added, setAdded] = useState(false)
 
+  const tr = (subKey: string, fallback: string) => {
+    const key = `recettes.${slug}.${subKey}`
+    const val = t(key)
+    return val === key ? fallback : val
+  }
+  const tp = (productId: string, fallback: string) => {
+    const key = `products.${productId}.name`
+    const val = t(key)
+    return val === key ? fallback : val
+  }
+
   const farmIngredients = useMemo(
     () =>
       (recette?.ingredients ?? [])
@@ -89,8 +100,6 @@ export default function RecetteDetailPage() {
     setAdded(true)
     setTimeout(() => setAdded(false), 3000)
   }
-
-  const totalTime = recette.tempsPrepMinutes + recette.tempsCuissonMinutes
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -185,7 +194,7 @@ export default function RecetteDetailPage() {
                     const scaled = quantitePourBase * ratio
                     return (
                       <li key={product!.id} className="flex items-center justify-between text-sm">
-                        <span className="text-stone-700">{product!.name}</span>
+                        <span className="text-stone-700">{tp(product!.id, product!.name)}</span>
                         <span className="font-medium text-green-800">
                           {formatQty(scaled, unite)}{displayUnit(scaled, unite) ? ` ${displayUnit(scaled, unite)}` : ''}
                         </span>
@@ -217,9 +226,9 @@ export default function RecetteDetailPage() {
                 {t(`recipes.categories.${CAT_KEYS[recette.categorie]}`)}
               </span>
               <h1 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 leading-tight">
-                {recette.titre}
+                {tr('titre', recette.titre)}
               </h1>
-              <p className="text-stone-600 text-lg leading-relaxed">{recette.description}</p>
+              <p className="text-stone-600 text-lg leading-relaxed">{tr('description', recette.description)}</p>
             </div>
 
             {/* Ingredients */}
@@ -238,7 +247,7 @@ export default function RecetteDetailPage() {
                     >
                       <span className="flex items-center gap-2">
                         {ing.productId && <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />}
-                        {ing.nom}
+                        {tr(`ingredients.${idx}.nom`, ing.nom)}
                         {ing.note && <span className="text-xs text-stone-400 italic">({ing.note})</span>}
                       </span>
                       <span className={`font-medium tabular-nums ${ing.productId ? 'text-green-800' : ''}`}>
@@ -260,14 +269,14 @@ export default function RecetteDetailPage() {
             <div className="space-y-4">
               <h2 className="font-serif font-bold text-stone-900 text-xl">{t('recipes.preparation')}</h2>
               <ol className="space-y-4">
-                {recette.etapes.map((etape) => (
+                {recette.etapes.map((etape, idx) => (
                   <li key={etape.numero} className="bg-white rounded-xl border border-stone-200 p-5 flex gap-4">
                     <div className="w-8 h-8 rounded-full bg-green-700 text-white font-bold text-sm flex items-center justify-center shrink-0 mt-0.5">
                       {etape.numero}
                     </div>
                     <div className="space-y-1 flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <h3 className="font-semibold text-stone-900">{etape.titre}</h3>
+                        <h3 className="font-semibold text-stone-900">{tr(`etapes.${idx}.titre`, etape.titre)}</h3>
                         {etape.dureeMinutes && (
                           <span className="text-xs text-stone-400 flex items-center gap-1 shrink-0">
                             <Clock className="h-3 w-3" />
@@ -275,7 +284,7 @@ export default function RecetteDetailPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-stone-600 text-sm leading-relaxed">{etape.description}</p>
+                      <p className="text-stone-600 text-sm leading-relaxed">{tr(`etapes.${idx}.description`, etape.description)}</p>
                     </div>
                   </li>
                 ))}
@@ -288,7 +297,7 @@ export default function RecetteDetailPage() {
                 <ChefHat className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-semibold text-amber-900 text-sm mb-1">{t('recipes.chefTip')}</p>
-                  <p className="text-amber-800 text-sm leading-relaxed">{recette.conseilChef}</p>
+                  <p className="text-amber-800 text-sm leading-relaxed">{tr('conseilChef', recette.conseilChef ?? '')}</p>
                 </div>
               </div>
             )}

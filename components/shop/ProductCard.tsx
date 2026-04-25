@@ -11,14 +11,44 @@ interface ProductCardProps {
   product: Product
 }
 
+const GRAM_STEP = 0.250
+
+function formatWeight(kg: number): string {
+  const grams = Math.round(kg * 1000)
+  if (grams < 1000) return `${grams} g`
+  const kgVal = grams / 1000
+  if (kgVal % 1 === 0) return `${kgVal} kg`
+  return `${kgVal.toFixed(3).replace(/\.?0+$/, '').replace('.', ',')} kg`
+}
+
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useStore()
   const { t } = useLanguage()
-  const [quantity, setQuantity] = useState(1)
+  const isKg = product.unit === 'kg'
+  const [quantity, setQuantity] = useState(isKg ? GRAM_STEP : 1)
+
+  const nameKey = `products.${product.id}.name`
+  const descKey = `products.${product.id}.description`
+  const displayName = t(nameKey) === nameKey ? product.name : t(nameKey)
+  const displayDescription = t(descKey) === descKey ? product.description : t(descKey)
 
   const handleAddToCart = () => {
     addToCart(product, quantity)
-    setQuantity(1)
+    setQuantity(isKg ? GRAM_STEP : 1)
+  }
+
+  const decrement = () => {
+    if (isKg) {
+      const next = Math.round((quantity - GRAM_STEP) * 1000) / 1000
+      if (next >= GRAM_STEP) setQuantity(next)
+    } else {
+      setQuantity(Math.max(1, quantity - 1))
+    }
+  }
+
+  const increment = () => {
+    if (isKg) setQuantity(Math.round((quantity + GRAM_STEP) * 1000) / 1000)
+    else setQuantity(quantity + 1)
   }
 
   return (
@@ -44,16 +74,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </span>
         </div>
 
-        <h3 className="text-xl font-bold text-stone-900 mb-2">{product.name}</h3>
-        <p className="text-stone-600 text-sm mb-6 flex-1 line-clamp-3">{product.description}</p>
+        <h3 className="text-xl font-bold text-stone-900 mb-2">{displayName}</h3>
+        <p className="text-stone-600 text-sm mb-6 flex-1 line-clamp-3">{displayDescription}</p>
 
         <div className="flex items-center gap-3 mt-auto">
           {product.inStock ? (
             <>
               <div className="flex items-center border border-stone-300 rounded-md">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 hover:bg-stone-100 text-stone-600">-</button>
-                <span className="w-8 text-center font-medium">{quantity}</span>
-                <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 hover:bg-stone-100 text-stone-600">+</button>
+                <button onClick={decrement} className="px-3 py-2 hover:bg-stone-100 text-stone-600">-</button>
+                <span className="w-16 text-center font-medium text-sm">{isKg ? formatWeight(quantity) : quantity}</span>
+                <button onClick={increment} className="px-3 py-2 hover:bg-stone-100 text-stone-600">+</button>
               </div>
               <Button onClick={handleAddToCart} className="flex-1 bg-green-700 hover:bg-green-800 text-white">
                 <ShoppingCart className="mr-2 h-4 w-4" /> {t('product.addToCart')}

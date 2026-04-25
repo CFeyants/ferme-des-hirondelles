@@ -10,17 +10,17 @@ interface Review {
 }
 
 const ROW1: Review[] = [
-  { name: 'Valérie D.', text: "Super endroit pour acheter des légumes frais directement à la ferme. Personnel accueillant et très sympathique." },
-  { name: 'Thomas B.', text: "La viande est incomparable avec ce qu'on trouve en supermarché. Les saucisses artisanales sont vraiment excellentes." },
-  { name: 'Sophie L.', text: "Le click & collect c'est très pratique. On commande le mercredi, on récupère le samedi. Toujours impeccable." },
-  { name: 'Marc V.', text: "Les saucisses et le rôti de porc sont un must. Mes enfants les réclament chaque semaine." },
+  { name: 'Véronique Brusselman', text: "Beau choix et fraîcheur assurée !" },
+  { name: 'Charline Degavre', text: "Un réel délice! En plus d'un service super agréable! Nous recommandons sans hésiter!!" },
+  { name: 'Claudine Vande Wal Schmidt', text: "Top, personnes charmantes et beau projet" },
+  { name: 'Cécile De Maeyer Pastorek', text: "Produits de saison frais et délicieux. On retrouve le goût authentique des aliments qui sont cultivés de manière naturelle. Et quel bonheur d'acheter directement au producteur dans une charmante Ferme 😍" },
 ]
 
 const ROW2: Review[] = [
-  { name: 'Isabelle R.', text: "Prix honnêtes, produits de qualité. On sait exactement d'où ça vient et ça change tout." },
-  { name: 'Pierre M.', text: "Le poulet fermier est exceptionnel. Dense, goûteux, rien à voir avec l'industriel." },
-  { name: 'Nathalie K.', text: "J'adore l'idée du panier anti-gaspillage. Bon pour le porte-monnaie et pour la planète." },
-  { name: 'Jean-Paul F.', text: "Les œufs de ferme sont délicieux ! On sent la différence avec les œufs du supermarché. Je ne peux plus m'en passer." },
+  { name: 'Suzanne Christmas', text: "Super endroit pour des produits frais et naturels avec des gens super sympathiques." },
+  { name: 'Olivier Joris', text: "des produits frais et un service au top !" },
+  { name: 'Véronique Brusselman', text: "Beau choix et fraîcheur assurée !" },
+  { name: 'Charline Degavre', text: "Un réel délice! En plus d'un service super agréable! Nous recommandons sans hésiter!!" },
 ]
 
 function ReviewCard({ review }: { review: Review }) {
@@ -34,7 +34,7 @@ function ReviewCard({ review }: { review: Review }) {
       <p className="text-stone-600 text-sm leading-relaxed line-clamp-3">"{review.text}"</p>
       <div className="flex items-center justify-between pt-1 border-t border-stone-50">
         <span className="font-semibold text-stone-800 text-sm">{review.name}</span>
-        <span className="text-xs text-stone-400">Google</span>
+        <span className="text-xs text-stone-400">Facebook</span>
       </div>
     </div>
   )

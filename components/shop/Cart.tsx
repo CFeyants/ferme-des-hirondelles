@@ -10,6 +10,16 @@ import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react'
 import { SheetClose } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
 
+const GRAM_STEP = 0.250
+
+function formatWeight(kg: number): string {
+  const grams = Math.round(kg * 1000)
+  if (grams < 1000) return `${grams} g`
+  const kgVal = grams / 1000
+  if (kgVal % 1 === 0) return `${kgVal} kg`
+  return `${kgVal.toFixed(3).replace(/\.?0+$/, '').replace('.', ',')} kg`
+}
+
 export const Cart = () => {
   const { cart, updateCartQuantity, removeFromCart, cartTotal } = useStore()
   const { t } = useLanguage()
@@ -48,11 +58,19 @@ export const Cart = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 border rounded-md p-1">
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateCartQuantity(item.id, item.quantity - 1)}>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {
+                      const step = item.unit === 'kg' ? GRAM_STEP : 1
+                      updateCartQuantity(item.id, Math.round((item.quantity - step) * 1000) / 1000)
+                    }}>
                       <Minus className="h-3 w-3" />
                     </Button>
-                    <span className="text-sm w-4 text-center">{item.quantity}</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateCartQuantity(item.id, item.quantity + 1)}>
+                    <span className="text-sm min-w-[3.5rem] text-center">
+                      {item.unit === 'kg' ? formatWeight(item.quantity) : item.quantity}
+                    </span>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {
+                      const step = item.unit === 'kg' ? GRAM_STEP : 1
+                      updateCartQuantity(item.id, Math.round((item.quantity + step) * 1000) / 1000)
+                    }}>
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
