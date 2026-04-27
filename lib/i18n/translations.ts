@@ -254,6 +254,12 @@ export const translations = {
       cgv: 'CGV',
       privacy: 'Vie Privée',
     },
+    cookies: {
+      message: 'Nous utilisons des cookies strictement nécessaires au bon fonctionnement du site (session, panier, connexion). Aucun cookie de suivi n\'est déposé sans votre accord.',
+      learnMore: 'En savoir plus',
+      accept: 'Accepter',
+      decline: 'Refuser',
+    },
     layout: {
       construction: '🚧 Site en construction — Ne passez aucune commande pour l\'instant. Nous vous prévenons dès l\'ouverture !',
     },
@@ -593,6 +599,12 @@ export const translations = {
       legal: 'Juridische informatie',
       cgv: 'Algemene voorwaarden',
       privacy: 'Privacybeleid',
+    },
+    cookies: {
+      message: 'Wij gebruiken cookies die strikt noodzakelijk zijn voor het correct functioneren van de site (sessie, winkelwagen, inloggen). Er worden geen tracking-cookies geplaatst zonder uw toestemming.',
+      learnMore: 'Meer informatie',
+      accept: 'Accepteren',
+      decline: 'Weigeren',
     },
     layout: {
       construction: '🚧 Site in opbouw — Plaats voorlopig geen bestellingen. We laten u weten van zodra we open zijn!',
@@ -1090,6 +1102,12 @@ export const translations = {
       legal: 'Legal Notice',
       cgv: 'Terms & Conditions',
       privacy: 'Privacy Policy',
+    },
+    cookies: {
+      message: 'We use strictly necessary cookies to ensure the proper functioning of the site (session, cart, login). No tracking cookies are placed without your consent.',
+      learnMore: 'Learn more',
+      accept: 'Accept',
+      decline: 'Decline',
     },
     layout: {
       construction: '🚧 Site under construction — Please do not place any orders for now. We will notify you when we open!',

@@ -4,6 +4,7 @@ import { Providers } from '@/components/providers/Providers'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { ConstructionBanner } from '@/components/layout/ConstructionBanner'
+import { CookieBanner } from '@/components/layout/CookieBanner'
 
 export const metadata: Metadata = {
   title: 'Ferme des Hirondelles',
@@ -25,6 +26,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <CookieBanner />
         </Providers>
       </body>
     </html>

@@ -63,9 +63,9 @@ export const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-stone-500">
           <p>&copy; {new Date().getFullYear()} Ferme des Hirondelles. {t('footer.rights')}</p>
           <div className="flex gap-4 mt-4 md:mt-0">
-            <span className="hover:text-stone-300 cursor-pointer">{t('footer.legal')}</span>
-            <Link href="/cgv" className="hover:text-stone-300 cursor-pointer">{t('footer.cgv')}</Link>
-            <span className="hover:text-stone-300 cursor-pointer">{t('footer.privacy')}</span>
+            <Link href="/mentions-legales" className="hover:text-stone-300 transition-colors">{t('footer.legal')}</Link>
+            <Link href="/cgv" className="hover:text-stone-300 transition-colors">{t('footer.cgv')}</Link>
+            <Link href="/confidentialite" className="hover:text-stone-300 transition-colors">{t('footer.privacy')}</Link>
           </div>
         </div>
       </div>
