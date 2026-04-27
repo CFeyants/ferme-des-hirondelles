@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useStore } from '@/context/StoreContext'
 import { useAuth } from '@/context/AuthContext'
+import { createClient } from '@/lib/supabase/client'
 import { isAdmin } from '@/utils/admin'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -12,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
-import { Plus, Trash, Edit, Download, CheckCheck, Check } from 'lucide-react'
+import { Plus, Trash, Edit, Download, CheckCheck, Check, Mail, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { Product } from '@/data'
 import { useForm } from 'react-hook-form'
@@ -43,12 +44,14 @@ export default function AdminPage() {
         <div className="text-sm text-stone-500">Connecté : <span className="font-medium text-stone-900">{user?.email}</span></div>
       </div>
       <Tabs defaultValue="products" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-[400px] mb-8">
+        <TabsList className="grid w-full grid-cols-3 max-w-[560px] mb-8">
           <TabsTrigger value="products">Produits & Stock</TabsTrigger>
           <TabsTrigger value="orders">Commandes</TabsTrigger>
+          <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
         </TabsList>
         <TabsContent value="orders"><OrdersView /></TabsContent>
         <TabsContent value="products"><ProductsView /></TabsContent>
+        <TabsContent value="newsletter"><NewsletterView /></TabsContent>
       </Tabs>
     </div>
   )
@@ -275,6 +278,118 @@ const ProductsView = () => {
                     <Button variant="ghost" size="icon" onClick={() => startEdit(p)}><Edit className="h-4 w-4" /></Button>
                     <Button variant="ghost" size="icon" onClick={() => deleteProduct(p.id)} className="text-red-500 hover:text-red-700"><Trash className="h-4 w-4" /></Button>
                   </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  )
+}
+
+type Subscriber = { id: string; email: string; locale: string; subscribed_at: string }
+
+const LOCALE_LABELS: Record<string, string> = { fr: '🇫🇷 Français', nl: '🇧🇪 Nederlands', en: '🇬🇧 English' }
+
+const NewsletterView = () => {
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchSubscribers = async () => {
+    setLoading(true)
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('newsletter_subscribers')
+      .select('id, email, locale, subscribed_at')
+      .order('subscribed_at', { ascending: false })
+    setSubscribers(data ?? [])
+    setLoading(false)
+  }
+
+  useEffect(() => { fetchSubscribers() }, [])
+
+  const handleExport = () => {
+    const data = subscribers.map(s => ({
+      Email: s.email,
+      Langue: LOCALE_LABELS[s.locale] ?? s.locale,
+      'Date d\'inscription': new Date(s.subscribed_at).toLocaleDateString('fr-BE', { dateStyle: 'medium' }),
+    }))
+    const ws = XLSX.utils.json_to_sheet(data)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Newsletter')
+    XLSX.writeFile(wb, `newsletter-${new Date().toISOString().split('T')[0]}.xlsx`)
+    toast.success('Fichier Excel exporté')
+  }
+
+  const handleDelete = async (id: string) => {
+    const supabase = createClient()
+    await supabase.from('newsletter_subscribers').delete().eq('id', id)
+    setSubscribers(prev => prev.filter(s => s.id !== id))
+    toast.success('Inscrit supprimé')
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap justify-between items-center gap-3">
+        <div>
+          <h2 className="text-xl font-bold">Inscrits à la newsletter</h2>
+          <p className="text-sm text-stone-500 mt-1">{subscribers.length} inscrit(s) au total</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={fetchSubscribers} className="gap-2">
+            <RefreshCw className="h-4 w-4" /> Actualiser
+          </Button>
+          <Button onClick={handleExport} variant="outline" className="gap-2" disabled={subscribers.length === 0}>
+            <Download className="h-4 w-4" /> Exporter Excel
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {(['fr', 'nl', 'en'] as const).map(lang => (
+          <Card key={lang}>
+            <CardHeader className="pb-2"><CardTitle className="text-base">{LOCALE_LABELS[lang]}</CardTitle></CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-green-700">{subscribers.filter(s => s.locale === lang).length}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="border rounded-md">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-8"><Mail className="h-4 w-4 text-stone-400" /></TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Langue</TableHead>
+              <TableHead>Date d'inscription</TableHead>
+              <TableHead className="text-right">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableRow><TableCell colSpan={5} className="text-center py-8 text-stone-400">Chargement...</TableCell></TableRow>
+            ) : subscribers.length === 0 ? (
+              <TableRow><TableCell colSpan={5} className="text-center py-8 text-stone-500">Aucun inscrit pour l'instant.</TableCell></TableRow>
+            ) : subscribers.map(s => (
+              <TableRow key={s.id}>
+                <TableCell></TableCell>
+                <TableCell className="font-medium">{s.email}</TableCell>
+                <TableCell>{LOCALE_LABELS[s.locale] ?? s.locale}</TableCell>
+                <TableCell className="text-stone-500 text-sm">
+                  {new Date(s.subscribed_at).toLocaleDateString('fr-BE', { dateStyle: 'medium' })}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(s.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

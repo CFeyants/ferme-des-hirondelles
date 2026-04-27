@@ -3,6 +3,7 @@
 import { HeroSection } from '@/components/home/HeroSection'
 import { HowItWorksSection } from '@/components/home/HowItWorksSection'
 import { ProductsSection } from '@/components/home/ProductsSection'
+import { NewsletterSection } from '@/components/home/NewsletterSection'
 import { ValuesSection } from '@/components/home/ValuesSection'
 import { RecipesSection } from '@/components/home/RecipesSection'
 import { TestimonialsSection } from '@/components/home/TestimonialsSection'
@@ -17,6 +18,7 @@ export default function HomePage() {
       </div>
       <HowItWorksSection />
       <ProductsSection />
+      <NewsletterSection />
       <ValuesSection />
       <RecipesSection />
       <TestimonialsSection />
