@@ -40,6 +40,12 @@ export default function RecettesPage() {
   const { t } = useLanguage()
   const [activeCategory, setActiveCategory] = useState<CategorieRecette | 'Tous'>('Tous')
 
+  const tr = (slug: string, subKey: string, fallback: string) => {
+    const key = `recettes.${slug}.${subKey}`
+    const val = t(key)
+    return val === key ? fallback : val
+  }
+
   const filtered =
     activeCategory === 'Tous'
       ? RECETTES
@@ -111,9 +117,9 @@ export default function RecettesPage() {
                   <div className="p-5 flex flex-col flex-1 gap-3">
                     <div>
                       <h2 className="font-serif font-bold text-stone-900 text-lg group-hover:text-green-700 transition-colors leading-snug">
-                        {recette.titre}
+                        {tr(recette.slug, 'titre', recette.titre)}
                       </h2>
-                      <p className="text-stone-500 text-sm mt-1 line-clamp-2">{recette.description}</p>
+                      <p className="text-stone-500 text-sm mt-1 line-clamp-2">{tr(recette.slug, 'description', recette.description)}</p>
                     </div>
 
                     <div className="flex items-center gap-3 text-xs text-stone-500 mt-auto pt-3 border-t border-stone-100">
