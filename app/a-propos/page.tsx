@@ -140,7 +140,7 @@ export default function AboutPage() {
                 </div>
                 <div>
                   <p className="font-semibold text-stone-800 text-sm">Click &amp; Collect</p>
-                  <p className="text-xs text-stone-400">Ven 16h–19h · Sam 10h–17h30</p>
+                  <p className="text-xs text-stone-400">{t('about.pickupHours')}</p>
                 </div>
               </div>
             </motion.div>

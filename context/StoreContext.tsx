@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
 import { Product, CartItem, Order, PRODUCTS } from '@/data'
 import { toast } from 'sonner'
+import { useLanguage } from '@/context/LanguageContext'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -30,6 +31,7 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined)
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
+  const { t } = useLanguage()
   const [products, setProducts] = useState<Product[]>(PRODUCTS)
   const [orders, setOrders] = useState<Order[]>([])
   const [cart, setCart] = useState<CartItem[]>([])
@@ -57,19 +59,19 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id)
       if (existing) {
-        toast.success('Quantité mise à jour dans le panier')
+        toast.success(t('toast.quantityUpdated'))
         return prev.map(item =>
           item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
         )
       }
-      toast.success('Ajouté au panier')
+      toast.success(t('toast.addedToCart'))
       return [...prev, { ...product, quantity }]
     })
   }
 
   const removeFromCart = (productId: string) => {
     setCart(prev => prev.filter(item => item.id !== productId))
-    toast.info('Produit retiré du panier')
+    toast.info(t('toast.removedFromCart'))
   }
 
   const updateCartQuantity = (productId: string, quantity: number) => {
@@ -102,10 +104,10 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
         body: JSON.stringify({ key: `order:${updatedOrder.id}`, value: updatedOrder })
       })
-      toast.success('Commande mise à jour')
+      toast.success(t('toast.orderUpdated'))
     } catch (error) {
       console.error('Failed to update order', error)
-      toast.error('Erreur lors de la mise à jour de la commande')
+      toast.error(t('toast.orderUpdateError'))
     }
   }
 

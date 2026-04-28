@@ -22,7 +22,7 @@ export function ValuesSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 space-y-3">
           <span className="text-[#2d5a27] font-bold uppercase tracking-widest text-xs">
-            Notre engagement
+            {t('home.values.engagement')}
           </span>
           <h2 className="font-serif text-3xl md:text-4xl text-[#1a2e17] font-normal">
             {t('home.values.title')}

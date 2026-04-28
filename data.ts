@@ -321,25 +321,15 @@ export const PRODUCTS: Product[] = [
 
 // Helper to check if shop is open
 // Open until Thursday 23:59
-export const isShopOpen = (): { isOpen: boolean; message: string } => {
+export const isShopOpen = (): { isOpen: boolean; status: 'open' | 'closed' } => {
   const now = new Date();
-  const currentDay = getDay(now); // 0 = Sunday, 1 = Monday, ..., 4 = Thursday, 5 = Friday, 6 = Saturday
+  const currentDay = getDay(now); // 0 = Sunday, ..., 4 = Thursday, 5 = Friday, 6 = Saturday
 
-  // Logic: 
-  // Orders open from Sunday to Thursday 23:59.
-  // Closed Friday and Saturday (pickup days).
-  
-  // If it's Friday (5) or Saturday (6), it's closed.
+  // Orders open Sunday → Thursday 23:59. Closed Friday & Saturday (pickup days).
   if (currentDay === 5 || currentDay === 6) {
-    return { isOpen: false, message: "Les commandes sont fermées. Retrait en cours." };
+    return { isOpen: false, status: 'closed' };
   }
-
-  // If it's Thursday (4), check time.
-  // Actually, standard logic says open all week UNTIL Thursday night.
-  // So if it's Thursday, it's open until 23:59.
-  // Since we only check day, basically if it's not Fri/Sat, it's open.
-  
-  return { isOpen: true, message: "Commandes ouvertes jusqu'à jeudi 23h59" };
+  return { isOpen: true, status: 'open' };
 };
 
 export const MOCK_ORDERS: Order[] = [

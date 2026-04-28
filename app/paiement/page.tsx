@@ -34,7 +34,7 @@ interface CheckoutForm {
 export default function CheckoutPage() {
   const { cart, cartTotal, addOrder, clearCart, setLastOrder } = useStore()
   const router = useRouter()
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const shopStatus = isShopOpen()
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -75,7 +75,7 @@ export default function CheckoutPage() {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <h2 className="text-2xl font-bold text-red-600 mb-4">{t('checkout.shopClosed')}</h2>
-        <p className="mb-6">{shopStatus.message}</p>
+        <p className="mb-6">{t('shop.closed')}</p>
         <Button onClick={() => router.push('/')} variant="outline" className="mt-4">{t('common.backHome')}</Button>
       </div>
     )
@@ -123,8 +123,8 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: data.email,
-          subject: `Confirmation de votre commande #${orderId} — Ferme des Hirondelles`,
-          html: generateOrderConfirmationEmail(newOrder)
+          subject: t('email.subject').replace('#{id}', orderId),
+          html: generateOrderConfirmationEmail(newOrder, locale as 'fr' | 'nl' | 'en')
         })
       })
 

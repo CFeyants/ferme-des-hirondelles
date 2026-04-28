@@ -22,9 +22,14 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     }
   }, [])
 
+  useEffect(() => {
+    document.documentElement.lang = locale
+  }, [locale])
+
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale)
     localStorage.setItem('locale', newLocale)
+    document.cookie = `locale=${newLocale};path=/;max-age=31536000;SameSite=Lax`
   }
 
   const t = createT(locale)
