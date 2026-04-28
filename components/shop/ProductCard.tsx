@@ -29,8 +29,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   const nameKey = `products.${product.id}.name`
   const descKey = `products.${product.id}.description`
+  const unitKey = `products.${product.id}.unit`
   const displayName = t(nameKey) === nameKey ? product.name : t(nameKey)
   const displayDescription = t(descKey) === descKey ? product.description : t(descKey)
+  const displayUnit = t(unitKey) === unitKey ? product.unit : t(unitKey)
 
   const handleAddToCart = () => {
     addToCart(product, quantity)
@@ -70,7 +72,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             {product.category}
           </span>
           <span className="font-bold text-lg text-stone-900">
-            {product.price.toFixed(2)}€ <span className="text-sm font-normal text-stone-500">/ {product.unit}</span>
+            {product.price.toFixed(2)}€ <span className="text-sm font-normal text-stone-500">/ {displayUnit}</span>
           </span>
         </div>
 

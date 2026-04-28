@@ -46,15 +46,20 @@ export const Cart = () => {
 
       <ScrollArea className="flex-1 -mx-6 px-6">
         <div className="space-y-6">
-          {cart.map((item) => (
+          {cart.map((item) => {
+            const nameKey = `products.${item.id}.name`
+            const unitKey = `products.${item.id}.unit`
+            const displayName = t(nameKey) === nameKey ? item.name : t(nameKey)
+            const displayUnit = t(unitKey) === unitKey ? item.unit : t(unitKey)
+            return (
             <div key={item.id} className="flex gap-4">
               <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md border border-stone-200">
                 <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
               </div>
               <div className="flex flex-1 flex-col justify-between">
                 <div>
-                  <h3 className="font-medium text-stone-900">{item.name}</h3>
-                  <p className="text-sm text-stone-500">{item.price.toFixed(2)}€ / {item.unit}</p>
+                  <h3 className="font-medium text-stone-900">{displayName}</h3>
+                  <p className="text-sm text-stone-500">{item.price.toFixed(2)}€ / {displayUnit}</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 border rounded-md p-1">
@@ -80,7 +85,8 @@ export const Cart = () => {
                 </div>
               </div>
             </div>
-          ))}
+          )
+          })}
         </div>
       </ScrollArea>
 

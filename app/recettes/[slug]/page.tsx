@@ -17,6 +17,21 @@ const CAT_KEYS: Record<string, string> = {
 const DIFF_KEYS: Record<string, string> = {
   Facile: 'facile', Moyen: 'moyen', Difficile: 'difficile',
 }
+const UNIT_KEYS: Record<string, string> = {
+  'c. à soupe': 'soupe',
+  'tranche(s)': 'tranche',
+  'pièce': 'piece',
+  'pièce(s)': 'pieceS',
+  'pièce (~1,5 kg)': 'pieceKg',
+  'botte(s)': 'botte',
+  'gousse(s)': 'gousse',
+  'bouquet': 'bouquet',
+  'feuille(s)': 'feuille',
+  'branche(s)': 'branche',
+  'au goût': 'auGout',
+  'ml (1 boîte)': 'boite',
+  'tête entière': 'teteEntiere',
+}
 const DIFFICULTE_COLOR: Record<string, string> = {
   Facile: 'text-green-700 bg-green-50 border-green-200',
   Moyen: 'text-amber-700 bg-amber-50 border-amber-200',
@@ -48,10 +63,6 @@ function formatQty(qty: number, unite: string): string {
   return Number.isInteger(rounded) ? `${rounded}` : `${rounded}`
 }
 
-function displayUnit(qty: number, unite: string): string {
-  if (unite === 'kg' && qty < 1) return ''
-  return unite
-}
 
 export default function RecetteDetailPage() {
   const params = useParams()
@@ -73,6 +84,12 @@ export default function RecetteDetailPage() {
     const key = `products.${productId}.name`
     const val = t(key)
     return val === key ? fallback : val
+  }
+  const tUnit = (unite: string): string => {
+    const unitKey = UNIT_KEYS[unite]
+    if (!unitKey) return unite
+    const val = t(`recipeUnits.${unitKey}`)
+    return val === `recipeUnits.${unitKey}` ? unite : val
   }
 
   const farmIngredients = useMemo(
@@ -196,7 +213,7 @@ export default function RecetteDetailPage() {
                       <li key={product!.id} className="flex items-center justify-between text-sm">
                         <span className="text-stone-700">{tp(product!.id, product!.name)}</span>
                         <span className="font-medium text-green-800">
-                          {formatQty(scaled, unite)}{displayUnit(scaled, unite) ? ` ${displayUnit(scaled, unite)}` : ''}
+                          {formatQty(scaled, unite)}{(unite !== 'kg' || scaled >= 1) ? ` ${tUnit(unite)}` : ''}
                         </span>
                       </li>
                     )
@@ -251,7 +268,7 @@ export default function RecetteDetailPage() {
                         {ing.note && <span className="text-xs text-stone-400 italic">({ing.note})</span>}
                       </span>
                       <span className={`font-medium tabular-nums ${ing.productId ? 'text-green-800' : ''}`}>
-                        {formatQty(scaled, ing.unite)}{displayUnit(scaled, ing.unite) ? ` ${displayUnit(scaled, ing.unite)}` : ''}
+                        {formatQty(scaled, ing.unite)}{(ing.unite !== 'kg' || scaled >= 1) ? ` ${tUnit(ing.unite)}` : ''}
                       </span>
                     </li>
                   )
