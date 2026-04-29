@@ -1,7 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// In-memory rate limiter: max 5 requests per IP per 10 minutes
+const rateLimitStore = new Map<string, number[]>()
+const WINDOW_MS = 10 * 60 * 1000
+const MAX_REQUESTS = 5
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const timestamps = (rateLimitStore.get(ip) ?? []).filter(t => now - t < WINDOW_MS)
+  if (timestamps.length >= MAX_REQUESTS) return true
+  rateLimitStore.set(ip, [...timestamps, now])
+  return false
+}
+
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ error: 'too_many_requests' }, { status: 429 })
+  }
+
   const { email, locale } = await req.json()
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

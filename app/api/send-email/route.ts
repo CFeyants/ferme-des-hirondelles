@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
+import { createClient } from '@/lib/supabase/server'
+
+const ADMIN_EMAILS = ['cedricfeyants@gmail.com', 'francoisderidder1995@gmail.com']
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -11,6 +14,13 @@ const transporter = nodemailer.createTransport({
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user || !ADMIN_EMAILS.includes(user.email ?? '')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await request.json()
     const { to, subject, html, text } = body
 
